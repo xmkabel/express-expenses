@@ -33,12 +33,21 @@ app.post("/expenses",(request,response)=>{
     });
 })
 
+app.put("/expenses/:id",(request,response)=>{
+    const sql = "UPDATE expenses SET name=?,description=?,category_id=?,value=? WHERE ID = ?"
+    let id = request.params.id;
+    let values = [request.body.name,request.body.description,request.body.category_id,request.body.value]
+    connection.query(sql,[...values,id],(error,data)=>{
+        if(error){return response.status(500).json({message:`Internal Server Error: ${error}`})}
+        else{return response.status(200).json({message:`Record (${id}) updated successfully!`})}
+    })
+})
+
 app.delete("/expenses/:id",(request,response)=>{
     const sql = "DELETE FROM expenses WHERE ID = ?";
     let id = request.params.id
     connection.query(sql,id,(error,data)=>{
         if(error){return response.status(500).json({message:`Internal Server Error: ${error}`})}
-        else{return response.status(201).json({message: "Record created successfully!"})}
+        else{return response.status(204).json({message: "Record deleted successfully!"})}
     });
 })
-// app.post("/expenses")
